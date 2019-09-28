@@ -1,0 +1,5 @@
+dist/
+build/
+db.sqlite3
+siup_account.egg-info/
+*__pycache__*
