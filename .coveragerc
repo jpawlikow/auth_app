@@ -1,0 +1,8 @@
+[run]
+  omit =
+    */migrations/*
+    */test/*
+    */apps.py
+    siup_account/*
+    */setup.py
+    */manage.py

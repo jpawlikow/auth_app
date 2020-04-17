@@ -3,3 +3,8 @@ build/
 db.sqlite3
 siup_account.egg-info/
 *__pycache__*
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
