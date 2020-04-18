@@ -1,6 +1,9 @@
+from account_app.models import Site, UserProfile
 from account_app.serializers.user import UserSerializer, SiteSerializer, UserProfileSerializer
 from account_app.testing.factories import UserFactory, SiteFactory, UserProfileFactory
+from django.contrib.auth.models import User
 from django.test import TestCase
+from rest_framework import exceptions
 
 
 class TestUserSerializer(TestCase):
@@ -100,3 +103,32 @@ class TestUserProfileSerializer(TestCase):
     def test_user_field_content(self):
         data = self.serialized_user_profile.data
         self.assertEqual(data['user'], self.serialized_user.data)
+
+    def test_create_method(self):
+        self.user.delete()
+        self.site.delete()
+
+        validated_data = {
+            'user': self.user_attributes,
+            'site': self.site_attributes,
+        }
+        user_profile = UserProfileSerializer().create(validated_data)
+        self.assertEqual(user_profile.user.id, User.objects.first().id)
+        self.assertEqual(user_profile.site.id, Site.objects.first().id)
+        self.assertEqual(user_profile.id, UserProfile.objects.first().id)
+
+    def test_create_method_with_inproper_site(self):
+        validated_data = {
+            'user': self.user_attributes,
+            'site': {},
+        }
+        with self.assertRaises(exceptions.ValidationError):
+            UserProfileSerializer().create(validated_data)
+
+    def test_create_method_with_inproper_user(self):
+        validated_data = {
+            'user': {},
+            'site': self.site_attributes,
+        }
+        with self.assertRaises(exceptions.ValidationError):
+            UserProfileSerializer().create(validated_data)

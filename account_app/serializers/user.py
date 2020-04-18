@@ -38,9 +38,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        user_serializer = self.fields['user']
-        user = user_serializer.create(validated_data['user'])
-        site_serializer = self.fields['site']
-        site = site_serializer.create(validated_data['site'])
+        user_serializer = UserSerializer(data=validated_data['user'])
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        site_serializer = SiteSerializer(data=validated_data['site'])
+        site_serializer.is_valid(raise_exception=True)
+        site = site_serializer.save()
+
         profile, _ = UserProfile.objects.get_or_create(user=user, site=site)
         return profile
